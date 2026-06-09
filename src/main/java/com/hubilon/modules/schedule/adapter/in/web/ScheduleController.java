@@ -87,10 +87,19 @@ public class ScheduleController {
         return ApiResponse.ok(response);
     }
 
-    @Operation(summary = "일정 수정", description = "일정 정보를 수정합니다.")
+    @Operation(summary = "일정 수정 (PUT)", description = "일정 정보를 수정합니다.")
     @PutMapping("/{id}")
-    @PatchMapping("/{id}")
     public ApiResponse<ScheduleDetailResponse> modify(
+            @Parameter(description = "일정 ID") @PathVariable Long id,
+            @RequestBody @Valid ScheduleModifyRequest request
+    ) {
+        var result = scheduleModifyUseCase.modify(scheduleWebMapper.toModifyCommand(id, request));
+        return ApiResponse.ok(scheduleWebMapper.toDetailResponse(result), "일정이 수정되었습니다.");
+    }
+
+    @Operation(summary = "일정 수정 (PATCH)", description = "일정 정보를 부분 수정합니다.")
+    @PatchMapping("/{id}")
+    public ApiResponse<ScheduleDetailResponse> modifyPatch(
             @Parameter(description = "일정 ID") @PathVariable Long id,
             @RequestBody @Valid ScheduleModifyRequest request
     ) {
